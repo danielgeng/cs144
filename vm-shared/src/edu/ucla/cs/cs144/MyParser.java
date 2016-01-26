@@ -196,9 +196,15 @@ class MyParser {
 	  
 	  for (Element item : getElementsByTagNameNR(doc.getDocumentElement(), "Item")) {
 	    StringBuilder sb = new StringBuilder();
+
+	    // ItemID, Name, and ItemCategory
+	    String itemID = item.getAttribute("ItemID");
+	    for (Element category : getElementsByTagNameNR(item, "Category"))
+	      itemCategoryFile.println(itemID + columnSeparator + getElementText(category));
 	    sb.append(item.getAttribute("ItemID") + columnSeparator);
 	    sb.append(getElementTextByTagNameNR(item, "Name") + columnSeparator);
 	    
+	    // Currently, Buy_Price, First_Bid, Number_of_Bids
 	    for (String field : moneyFields) {
 	      String optional = getElementTextByTagNameNR(item, field);
 	      if (optional == "")
@@ -206,21 +212,38 @@ class MyParser {
 	      else
 		sb.append(strip(optional) + columnSeparator);
 	    }
-
 	    sb.append(getElementTextByTagNameNR(item, "Number_of_Bids") + columnSeparator);
 
+	    // Started, Ends
 	    for (String field: timeFields) {
 	      Date date = inFormat.parse(getElementTextByTagNameNR(item, field));
 	      sb.append(outFormat.format(date) + columnSeparator); 
 	    }
 
+	    // Seller & User
 	    Element seller = getElementByTagNameNR(item, "Seller");
-	    sb.append(seller.getAttribute("UserID") + columnSeparator);
+	    String sellerID = seller.getAttribute("UserID");
+	    sb.append(sellerID + columnSeparator);
+	    userFile.println(sellerID + seller.getAttribute("Rating") + columnSeparator + getElementTextByTagNameNR(item, "Location") + columnSeparator + getElementTextByTagNameNR(item, "Country"));
 
+	    // Description
 	    String description = getElementTextByTagNameNR(item, "Description");
 	    sb.append(description.substring(0, Math.min(description.length(), 4000)));
-
 	    itemFile.println(sb.toString());
+
+	    // Bids
+	    for (Element bid : getElementsByTagNameNR(getElementByTagNameNR(item, "Bids"), "Bid")) {
+	      // User
+	      Element bidder = getElementByTagNameNR(bid, "Bidder");
+	      String bidderID = bidder.getAttribute("UserID");
+	      userFile.println(bidderID + bidder.getAttribute("Rating") + columnSeparator + getElementTextByTagNameNR(bidder, "Location") + columnSeparator + getElementTextByTagNameNR(bidder, "Country"));
+
+	      // Time & Amount
+	      Date date = inFormat.parse(getElementTextByTagNameNR(bid, "Time"));
+	      String time = outFormat.format(date);
+	      String amount = strip(getElementTextByTagNameNR(bid, "Amount"));
+	      bidFile.println(itemID + columnSeparator + bidderID + columnSeparator + time + columnSeparator + amount);
+	    }
 	  }
 	
 	  itemFile.close();
