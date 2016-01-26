@@ -224,7 +224,7 @@ class MyParser {
 	    Element seller = getElementByTagNameNR(item, "Seller");
 	    String sellerID = seller.getAttribute("UserID");
 	    sb.append(sellerID + columnSeparator);
-	    userFile.println(sellerID + seller.getAttribute("Rating") + columnSeparator + getElementTextByTagNameNR(item, "Location") + columnSeparator + getElementTextByTagNameNR(item, "Country"));
+	    userFile.println(sellerID + columnSeparator + seller.getAttribute("Rating") + columnSeparator + getElementTextByTagNameNR(item, "Location") + columnSeparator + getElementTextByTagNameNR(item, "Country"));
 
 	    // Description
 	    String description = getElementTextByTagNameNR(item, "Description");
@@ -236,7 +236,7 @@ class MyParser {
 	      // User
 	      Element bidder = getElementByTagNameNR(bid, "Bidder");
 	      String bidderID = bidder.getAttribute("UserID");
-	      userFile.println(bidderID + bidder.getAttribute("Rating") + columnSeparator + getElementTextByTagNameNR(bidder, "Location") + columnSeparator + getElementTextByTagNameNR(bidder, "Country"));
+	      userFile.println(bidderID + columnSeparator + bidder.getAttribute("Rating") + columnSeparator + getElementTextByTagNameNR(bidder, "Location") + columnSeparator + getElementTextByTagNameNR(bidder, "Country"));
 
 	      // Time & Amount
 	      Date date = inFormat.parse(getElementTextByTagNameNR(bid, "Time"));
