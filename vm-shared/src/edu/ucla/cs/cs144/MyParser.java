@@ -183,10 +183,54 @@ class MyParser {
         /* Fill in code here (you will probably need to write auxiliary
             methods). */
         
-        
-        
-        /**************************************************************/
-        
+	String[] moneyFields = {"Currently", "Buy_Price", "First_Bid"};
+	String[] timeFields = {"Started", "Ends"};
+	SimpleDateFormat inFormat = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+	SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	try {
+	  PrintWriter itemFile = new PrintWriter("Item.dat");
+	  PrintWriter userFile = new PrintWriter("User.dat");
+	  PrintWriter itemCategoryFile = new PrintWriter("ItemCategory.dat");
+	  PrintWriter bidFile = new PrintWriter("Bid.dat");
+	  
+	  for (Element item : getElementsByTagNameNR(doc.getDocumentElement(), "Item")) {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append(item.getAttribute("ItemID") + columnSeparator);
+	    sb.append(getElementTextByTagNameNR(item, "Name") + columnSeparator);
+	    
+	    for (String field : moneyFields) {
+	      String optional = getElementTextByTagNameNR(item, field);
+	      if (optional == "")
+		sb.append("\\N" + columnSeparator);
+	      else
+		sb.append(strip(optional) + columnSeparator);
+	    }
+
+	    sb.append(getElementTextByTagNameNR(item, "Number_of_Bids") + columnSeparator);
+
+	    for (String field: timeFields) {
+	      Date date = inFormat.parse(getElementTextByTagNameNR(item, field));
+	      sb.append(outFormat.format(date) + columnSeparator); 
+	    }
+
+	    Element seller = getElementByTagNameNR(item, "Seller");
+	    sb.append(seller.getAttribute("UserID") + columnSeparator);
+
+	    String description = getElementTextByTagNameNR(item, "Description");
+	    sb.append(description.substring(0, Math.min(description.length(), 4000)));
+
+	    itemFile.println(sb.toString());
+	  }
+	
+	  itemFile.close();
+	  userFile.close();
+	  itemCategoryFile.close();
+	  bidFile.close();
+	}
+	catch (Exception e) {
+	  e.printStackTrace();
+	} 
     }
     
     public static void main (String[] args) {
