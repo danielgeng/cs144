@@ -189,10 +189,10 @@ class MyParser {
 	SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	try {
-	  PrintWriter itemFile = new PrintWriter("Item.dat");
-	  PrintWriter userFile = new PrintWriter("User.dat");
-	  PrintWriter itemCategoryFile = new PrintWriter("ItemCategory.dat");
-	  PrintWriter bidFile = new PrintWriter("Bid.dat");
+	  PrintWriter itemFile = new PrintWriter(new FileOutputStream(new File("Item.dat"),true));
+	  PrintWriter userFile = new PrintWriter(new FileOutputStream(new File("User.dat"),true));
+	  PrintWriter itemCategoryFile = new PrintWriter(new FileOutputStream(new File("ItemCategory.dat"),true));
+	  PrintWriter bidFile = new PrintWriter(new FileOutputStream(new File("Bid.dat"),true));
 	  
 	  for (Element item : getElementsByTagNameNR(doc.getDocumentElement(), "Item")) {
 	    StringBuilder sb = new StringBuilder();
