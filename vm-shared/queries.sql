@@ -2,7 +2,7 @@ select count(*) from User;
 
 select count(i.ItemID) 
 from Item i, User u 
-where u.UserID = i.Seller and u.Location = "New York";
+where u.UserID = i.Seller and binary u.Location = "New York";
 
 select count(*)
 from (select ItemID

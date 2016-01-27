@@ -1,4 +1,4 @@
-load data local infile './User.dat' into table user
+load data local infile './User.dat' into table User
 fields terminated by '|*|';
 
 load data local infile './Item.dat' into table Item
