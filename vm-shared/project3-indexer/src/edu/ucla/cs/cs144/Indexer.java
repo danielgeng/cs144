@@ -70,12 +70,13 @@ public class Indexer {
 
 	    // Query the database
 	    Statement s = conn.createStatement();
+	    Statement item_s = conn.createStatement();
 	    ResultSet item_rs, ic_rs, user_rs;
-	    String name, category, seller,
+	    String item_id, name, category, seller,
 		   location, country, description;
 
 	    // Item
-	    item_rs = s.executeQuery("select * from Item;");
+	    item_rs = item_s.executeQuery("select * from Item;");
 	    while (item_rs.next()) {
 	      Document doc = new Document();
 
@@ -83,17 +84,17 @@ public class Indexer {
 	      name        = item_rs.getString("Name");
 	      seller      = item_rs.getString("Seller");
 	      description = item_rs.getString("Description");
-	      doc.add(new StringField("Name"  , name  , Field.Store.YES));
+	      doc.add(new TextField("Name"  , name  , Field.Store.YES));
 	      doc.add(new StringField("Seller", seller, Field.Store.YES));
 	      if (description != null)
-		doc.add(new TextField("Description", description, Field.Store.NO));
+		doc.add(new TextField("Description", description, Field.Store.YES));
 
 	      // Location & Country of Seller
-	      user_rs = s.executeQuery("select * from User where UserID=" + seller + ";");
+	      user_rs = s.executeQuery("select * from User where UserID=\"" + seller + "\";");
 	      if (user_rs.next()) {
 		location = user_rs.getString("Location");
 		country  = user_rs.getString("Country");
-		doc.add(new StringField("Location", location, Field.Store.YES));
+		doc.add(new TextField("Location", location, Field.Store.YES));
 		doc.add(new StringField("Country", country, Field.Store.YES));
 	      }	
 	     
@@ -101,9 +102,8 @@ public class Indexer {
 	      ic_rs = s.executeQuery("select * from Item_Category where ItemID=" + item_id + ";");
 	      while (ic_rs.next()) {
 		category = ic_rs.getString("Category");
-		doc.add(new StringField("Category", category, Field.Store.YES));
+		doc.add(new TextField("Category", category, Field.Store.YES));
 	      }
-
 	      indexWriter.addDocument(doc);
 	    }
 
