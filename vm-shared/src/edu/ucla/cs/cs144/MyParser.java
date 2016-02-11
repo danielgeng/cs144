@@ -207,7 +207,7 @@ class MyParser {
 	    // Currently, Buy_Price, First_Bid, Number_of_Bids
 	    for (String field : moneyFields) {
 	      String optional = getElementTextByTagNameNR(item, field);
-	      if (optional == "")
+	      if (optional.equals(""))
 		sb.append("\\N" + columnSeparator);
 	      else
 		sb.append(strip(optional) + columnSeparator);
@@ -220,11 +220,23 @@ class MyParser {
 	      sb.append(outFormat.format(date) + columnSeparator); 
 	    }
 
-	    // Seller & User
+	    // Seller
 	    Element seller = getElementByTagNameNR(item, "Seller");
 	    String sellerID = seller.getAttribute("UserID");
 	    sb.append(sellerID + columnSeparator);
-	    userFile.println(sellerID + columnSeparator + seller.getAttribute("Rating") + columnSeparator + getElementTextByTagNameNR(item, "Location") + columnSeparator + getElementTextByTagNameNR(item, "Country"));
+	    
+	    // Location
+	    Element location = getElementByTagNameNR(item, "Location");
+	    String[] latlon = {location.getAttribute("Latitude"), location.getAttribute("Longitude")};
+	    for (String s : latlon) {
+	      if (s.equals(""))
+		sb.append("\\N" + columnSeparator);
+	      else
+		sb.append(s + columnSeparator);
+	    }
+
+	    // write seller info to user file
+	    userFile.println(sellerID + columnSeparator + seller.getAttribute("Rating") + columnSeparator + getElementText(location) + columnSeparator + getElementTextByTagNameNR(item, "Country"));
 
 	    // Description
 	    String description = getElementTextByTagNameNR(item, "Description");
