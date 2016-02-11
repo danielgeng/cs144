@@ -35,40 +35,60 @@ import edu.ucla.cs.cs144.SearchResult;
 
 public class AuctionSearch implements IAuctionSearch {
 
-	/* 
-         * You will probably have to use JDBC to access MySQL data
-         * Lucene IndexSearcher class to lookup Lucene index.
-         * Read the corresponding tutorial to learn about how to use these.
-         *
-	 * You may create helper functions or classes to simplify writing these
-	 * methods. Make sure that your helper functions are not public,
-         * so that they are not exposed to outside of this class.
-         *
-         * Any new classes that you create should be part of
-         * edu.ucla.cs.cs144 package and their source files should be
-         * placed at src/edu/ucla/cs/cs144.
-         *
-         */
-	
-	public SearchResult[] basicSearch(String query, int numResultsToSkip, 
-			int numResultsToReturn) {
-		// TODO: Your code here!
-		return new SearchResult[0];
-	}
+  public final static String LUCENE_DIR = "/var/lib/lucene";
+  
+  private IndexSearcher searcher = null;
+  private QueryParser parser = null;
 
-	public SearchResult[] spatialSearch(String query, SearchRegion region,
-			int numResultsToSkip, int numResultsToReturn) {
-		// TODO: Your code here!
-		return new SearchResult[0];
-	}
+  public AuctionSearch() {
+    try {
+      searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(new File(LUCENE_DIR + "/index1"))));
+      parser = parser = new QueryParser("content", new StandardAnalyzer());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
-	public String getXMLDataForItemId(String itemId) {
-		// TODO: Your code here!
-		return "";
-	}
-	
-	public String echo(String message) {
-		return message;
-	}
+  public SearchResult[] basicSearch(String query, int numResultsToSkip, 
+      int numResultsToReturn) {
+
+    SearchResult[] res = new SearchResult[numResultsToReturn];
+    ScoreDoc[] hits = null;
+
+    // Get the TopDocs from lucene
+    try {
+      Query q = parser.parse(query);
+      hits = searcher.search(q, numResultsToSkip + numResultsToReturn).scoreDocs;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // Skip some, and construct SearchResults for the rest
+    for (int i = numResultsToSkip; i < res.length; i++) {
+      try {
+	Document doc = searcher.doc(i);
+	res[i] = new SearchResult(doc.get("ItemID"), doc.get("Name"));
+      } catch (IOException e) {
+	e.printStackTrace();
+      }
+    }
+
+    return res;
+  }
+
+  public SearchResult[] spatialSearch(String query, SearchRegion region,
+      int numResultsToSkip, int numResultsToReturn) {
+    // TODO: Your code here!
+    return new SearchResult[0];
+  }
+
+  public String getXMLDataForItemId(String itemId) {
+    // TODO: Your code here!
+    return "";
+  }
+
+  public String echo(String message) {
+    return message;
+  }
 
 }

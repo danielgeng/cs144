@@ -73,7 +73,7 @@ public class Indexer {
 	    Statement item_s = conn.createStatement();
 	    ResultSet item_rs, ic_rs, user_rs;
 	    String item_id, name, category, seller,
-		   location, country, description;
+		   location, country, description, content;
 
 	    // Item
 	    item_rs = item_s.executeQuery("select * from Item;");
@@ -84,10 +84,12 @@ public class Indexer {
 	      name        = item_rs.getString("Name");
 	      seller      = item_rs.getString("Seller");
 	      description = item_rs.getString("Description");
-	      doc.add(new TextField("Name"  , name  , Field.Store.YES));
+	      doc.add(new StringField("ItemID", item_id, Field.Store.YES));
+	      doc.add(new TextField("Name", name, Field.Store.YES));
 	      doc.add(new StringField("Seller", seller, Field.Store.YES));
 	      if (description != null)
 		doc.add(new TextField("Description", description, Field.Store.YES));
+	      content = item_id + " " + name + " " + seller + " " + description;
 
 	      // Location & Country of Seller
 	      user_rs = s.executeQuery("select * from User where UserID=\"" + seller + "\";");
@@ -96,14 +98,19 @@ public class Indexer {
 		country  = user_rs.getString("Country");
 		doc.add(new TextField("Location", location, Field.Store.YES));
 		doc.add(new StringField("Country", country, Field.Store.YES));
+		content += " " +  location + " " + country;
 	      }	
 	     
-	      // Item_Category
+
+	      // Item_Categories
 	      ic_rs = s.executeQuery("select * from Item_Category where ItemID=" + item_id + ";");
 	      while (ic_rs.next()) {
 		category = ic_rs.getString("Category");
 		doc.add(new TextField("Category", category, Field.Store.YES));
+		content += " " + category;
 	      }
+
+	      doc.add(new TextField("content", content, Field.Store.NO));
 	      indexWriter.addDocument(doc);
 	    }
 
