@@ -36,7 +36,7 @@ import edu.ucla.cs.cs144.SearchResult;
 public class AuctionSearch implements IAuctionSearch {
 
   public final static String LUCENE_DIR = "/var/lib/lucene";
-  
+
   private IndexSearcher searcher = null;
   private QueryParser parser = null;
 
@@ -52,13 +52,14 @@ public class AuctionSearch implements IAuctionSearch {
   public SearchResult[] basicSearch(String query, int numResultsToSkip, 
       int numResultsToReturn) {
 
-    SearchResult[] res = new SearchResult[numResultsToReturn];
+    SearchResult[] res = null;
     ScoreDoc[] hits = null;
 
     // Get the TopDocs from lucene
     try {
       Query q = parser.parse(query);
       hits = searcher.search(q, numResultsToSkip + numResultsToReturn).scoreDocs;
+      res = new SearchResult[hits.length];
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -83,7 +84,15 @@ public class AuctionSearch implements IAuctionSearch {
   }
 
   public String getXMLDataForItemId(String itemId) {
-    // TODO: Your code here!
+    Connection conn = null;
+
+    // create a connection to the database to retrieve Items from MySQL
+    try {
+      conn = DbManager.getConnection(true);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
     return "";
   }
 
