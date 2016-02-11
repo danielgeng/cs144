@@ -16,6 +16,8 @@ create table Item(
 	Started timestamp not null,
 	Ends timestamp not null,
 	Seller varchar(100) not null,
+	Latitude decimal(9,6),
+	Longitude decimal(9,6),
 	Description varchar(4000),
 	primary key (ItemID),
 	foreign key (Seller) references User(UserID)
