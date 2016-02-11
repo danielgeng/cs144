@@ -68,24 +68,45 @@ public class Indexer {
         try {
             getIndexWriter(true);
 
-            /*
-             * Add your code here to retrieve Items using the connection
-             * and add corresponding entries to your Lucene inverted indexes.
-                 *
-                 * You will have to use JDBC API to retrieve MySQL data from Java.
-                 * Read our tutorial on JDBC if you do not know how to use JDBC.
-                 *
-                 * You will also have to use Lucene IndexWriter and Document
-                 * classes to create an index and populate it with Items data.
-                 * Read our tutorial on Lucene as well if you don't know how.
-                 *
-                 * As part of this development, you may want to add 
-                 * new methods and create additional Java classes. 
-                 * If you create new classes, make sure that
-                 * the classes become part of "edu.ucla.cs.cs144" package
-                 * and place your class source files at src/edu/ucla/cs/cs144/.
-             * 
-             */ 
+	    // Query the database
+	    Statement s = conn.createStatement();
+	    ResultSet item_rs, ic_rs, user_rs;
+	    String name, category, seller,
+		   location, country, description;
+
+	    // Item
+	    item_rs = s.executeQuery("select * from Item;");
+	    while (item_rs.next()) {
+	      Document doc = new Document();
+
+	      item_id     = item_rs.getString("ItemID");
+	      name        = item_rs.getString("Name");
+	      seller      = item_rs.getString("Seller");
+	      description = item_rs.getString("Description");
+	      doc.add(new StringField("Name"  , name  , Field.Store.YES));
+	      doc.add(new StringField("Seller", seller, Field.Store.YES));
+	      if (description != null)
+		doc.add(new TextField("Description", description, Field.Store.NO));
+
+	      // Location & Country of Seller
+	      user_rs = s.executeQuery("select * from User where UserID=" + seller + ";");
+	      if (user_rs.next()) {
+		location = user_rs.getString("Location");
+		country  = user_rs.getString("Country");
+		doc.add(new StringField("Location", location, Field.Store.YES));
+		doc.add(new StringField("Country", country, Field.Store.YES));
+	      }	
+	     
+	      // Item_Category
+	      ic_rs = s.executeQuery("select * from Item_Category where ItemID=" + item_id + ";");
+	      while (ic_rs.next()) {
+		category = ic_rs.getString("Category");
+		doc.add(new StringField("Category", category, Field.Store.YES));
+	      }
+
+	      indexWriter.addDocument(doc);
+	    }
+
 
             closeIndexWriter();
             conn.close();

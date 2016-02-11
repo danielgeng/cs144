@@ -228,12 +228,14 @@ class MyParser {
 	    // Location
 	    Element location = getElementByTagNameNR(item, "Location");
 	    String[] latlon = {location.getAttribute("Latitude"), location.getAttribute("Longitude")};
+	    /*
 	    for (String s : latlon) {
-	      if (s.equals(""))
+	      if (s.equals("")) 
 		sb.append("\\N" + columnSeparator);
 	      else
 		sb.append(s + columnSeparator);
 	    }
+	    */
 
 	    // write seller info to user file
 	    userFile.println(sellerID + columnSeparator + seller.getAttribute("Rating") + columnSeparator + getElementText(location) + columnSeparator + getElementTextByTagNameNR(item, "Country"));
