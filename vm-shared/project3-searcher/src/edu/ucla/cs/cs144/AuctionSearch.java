@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 import java.text.SimpleDateFormat;
 
 import java.sql.Connection;
@@ -79,8 +80,45 @@ public class AuctionSearch implements IAuctionSearch {
 
   public SearchResult[] spatialSearch(String query, SearchRegion region,
       int numResultsToSkip, int numResultsToReturn) {
-    // TODO: Your code here!
-    return new SearchResult[0];
+    // Get item ID's that fit the location
+    HashSet<String> spatialItems = new HashSet<>();
+    Connection conn = null;
+    try {
+	conn = DbManager.getConnection(true);
+	Statement s = conn.createStatement();
+	String lx = Double.toString(region.getLx());
+	String ly = Double.toString(region.getLy());
+	String rx = Double.toString(region.getRx());
+	String ry = Double.toString(region.getRy());
+	ResultSet rs;
+	rs = s.executeQuery("select ItemID from Item_Location" +
+			    " where x(Location) >= " + lx +
+			    " and x(Location) <= " + rx +
+			    " and y(Location) >= " + ly +
+			    " and y(Location) <= " + ry);
+	while (rs.next())
+	  spatialItems.add(rs.getString("ItemID"));
+    } catch (SQLException e) {
+	e.printStackTrace();
+    }
+    if (spatialItems.size() == 0)
+      return new SearchResult[0];
+    
+    // Get basic search results and filter based on item ID's
+    ArrayList<SearchResult> res = new ArrayList<>();
+    SearchResult[] basic_res = basicSearch(query, 0, spatialItems.size());
+    int count = 0;
+    for (SearchResult r : basic_res)  {
+      if (spatialItems.contains(r.getItemId())) {
+	if (count >= numResultsToSkip)
+	  res.add(r);
+	count++;
+	if (count == numResultsToSkip + numResultsToReturn)
+	  break;
+      }
+    }
+
+    return res.toArray(new SearchResult[res.size()]);
   }
 
   public String getXMLDataForItemId(String itemId) {
