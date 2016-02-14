@@ -125,8 +125,30 @@ public class AuctionSearch implements IAuctionSearch {
     return res.toArray(new SearchResult[res.size()]);
   }
 
+  public String escapeString(String s){
+    if (s == null)
+    return s;
+    
+    return s.replaceAll("\"", "&quot;").replaceAll("'", "&apos;").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  }
+
+  public String formatDate(String date){
+    SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat output = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+    String retval = "";
+
+    try {
+      Date parsed = input.parse(date);
+      retval = output.format(parsed);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return retval;
+  }
+
   public String getXMLDataForItemId(String itemId) {
-    String res = "<Item ItemID=\"" + itemId + "\">";
+    String res = "<Item ItemID=\"" + itemId + "\">\n";
     
     String name, currently, buy_price, first_bid, number_of_bids, started, ends, seller, latitude, longitude, description;
     String rating = "";
@@ -143,53 +165,53 @@ public class AuctionSearch implements IAuctionSearch {
       if (!rs.next())
 	return "";
       
-      name = rs.getString("Name");
-      res += "<Name>" + name + "</Name>";
+      name = escapeString(rs.getString("Name"));
+      res += "<Name>" + name + "</Name>\n";
       
       currently = rs.getString("Currently");
       buy_price = rs.getString("Buy_Price");
       first_bid = rs.getString("First_Bid");
       number_of_bids = rs.getString("Number_of_Bids");
-      started = rs.getString("Started");
-      ends = rs.getString("Ends");
-      seller = rs.getString("Seller");
+      started = formatDate(rs.getString("Started"));
+      ends = formatDate(rs.getString("Ends"));
+      seller = escapeString(rs.getString("Seller"));
       latitude = rs.getString("Latitude");
       longitude = rs.getString("Longitude");
-      description = rs.getString("Description");
+      description = escapeString(rs.getString("Description"));
       
       // Seller
       rs = s.executeQuery("select * from User" +
 			  " where UserID = \"" + seller + "\"");
       if (rs.next()) {
 	rating = rs.getString("Rating");
-	location = rs.getString("Location");
-	country = rs.getString("Country");
+	location = escapeString(rs.getString("Location"));
+	country = escapeString(rs.getString("Country"));
       }
 
       rs = s.executeQuery("select * from Item_Category" +
 			  " where ItemID = \"" + itemId + "\"");
       // Categories
       while (rs.next()) 
-	res += "<Category>" + rs.getString("Category") + "</Category>";
+	res += "<Category>" + rs.getString("Category") + "</Category>\n";
 
-      res += "<Currently>" + currently + "</Currently>";
+      res += "<Currently>$" + currently + "</Currently>\n";
       if (buy_price != null)
-	res += "<Buy_Price>" + buy_price + "</Buy_Price>";
-      res += "<First_Bid>" + first_bid + "</First_Bid>";
-      res += "<Number_of_Bids>" + number_of_bids + "</Number_of_Bids>";
+	res += "<Buy_Price>$" + buy_price + "</Buy_Price>\n";
+      res += "<First_Bid>$" + first_bid + "</First_Bid>\n";
+      res += "<Number_of_Bids>" + number_of_bids + "</Number_of_Bids>\n";
       
       // Bids
       rs = s.executeQuery("select * from Bid" + 
 			  " where ItemID = \"" + itemId + "\"");
-      if (rs.next()) {
-	res += "<Bids>";
+      res += "<Bids>\n";
+      if (rs.next()){
 	do {
 	  // Time and amount
-	  String time = rs.getString("Time");
+	  String time = formatDate(rs.getString("Time"));
 	  String amount = rs.getString("Amount");
 
 	  // Bidder: location, rating, and country 
-	  String bidder = rs.getString("Bidder");
+	  String bidder = escapeString(rs.getString("UserID"));
 	  String b_location = "";
 	  String b_country = "";
 	  String b_rating = "";
@@ -198,32 +220,32 @@ public class AuctionSearch implements IAuctionSearch {
 	  ResultSet user_rs = user_s.executeQuery("select * from User" +
 						  " where UserID = \"" + bidder + "\"");
 	  if (user_rs.next()) {
-	    b_location = user_rs.getString("Location");
-	    b_country = user_rs.getString("Country");
+	    b_location = escapeString(user_rs.getString("Location"));
+	    b_country = escapeString(user_rs.getString("Country"));
 	    b_rating = user_rs.getString("Rating");
 	  }
 
-	  res += "<Bid><Bidder Rating =\"" + b_rating + "\" ";
-	  res += "UserID=\"" + bidder + "\">";
+	  res += "<Bid>\n<Bidder Rating=\"" + b_rating + "\" ";
+	  res += "UserID=\"" + bidder + "\">\n";
 	  res += "<Location Latitude=\"" + latitude + "\" ";
 	  res += "Longitude=\"" + longitude + "\">";
-	  res += b_location + "</Location>";
-	  res += "<Country>" + b_country + "</Country></Bidder>";
-	  res += "<Time>" + time + "</Time>";
-	  res += "<Amount>" + amount + "</Amount></Bid>";
+	  res += b_location + "</Location>\n";
+	  res += "<Country>" + b_country + "</Country>\n</Bidder>\n";
+	  res += "<Time>" + time + "</Time>\n";
+	  res += "<Amount>$" + amount + "</Amount>\n</Bid>\n";
 	  
 	} while (rs.next());
       }
-      else
-	res += "<Bids />";
+
+	res += "</Bids>\n";
       
-      res += "<Location>" + location + "</Location>";
-      res += "<Country>" + country + "</Country>";
-      res += "<Started>" + started + "</Started>";
-      res += "<Ends>" + ends + "</Ends>";
+      res += "<Location>" + location + "</Location>\n";
+      res += "<Country>" + country + "</Country>\n";
+      res += "<Started>" + started + "</Started>\n";
+      res += "<Ends>" + ends + "</Ends>\n";
       res += "<Seller Rating=\"" + rating + "\" ";
-      res += "UserID=\"" + seller + "\" />";
-      res += "<Description>" + description + "</Description></Item>";
+      res += "UserID=\"" + seller + "\"/>\n";
+      res += "<Description>" + description + "</Description>\n</Item>";
       
     } catch (SQLException e) {
 	e.printStackTrace();
