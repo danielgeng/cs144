@@ -68,7 +68,7 @@ public class AuctionSearch implements IAuctionSearch {
     // Skip some, and construct SearchResults for the rest
     for (int i = 0; i < res.length; i++) {
       try {
-	Document doc = searcher.doc(hits[i].doc);
+	Document doc = searcher.doc(hits[i+numResultsToSkip].doc);
 	res[i] = new SearchResult(doc.get("ItemID"), doc.get("Name"));
       } catch (IOException e) {
 	e.printStackTrace();
