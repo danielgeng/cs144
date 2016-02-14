@@ -86,7 +86,7 @@ public class Indexer {
 	      doc.add(new TextField("Name", name, Field.Store.YES));
 	      if (description != null)
 		doc.add(new TextField("Description", description, Field.Store.YES));
-	      content = item_id + " " + name + " " + " " + description;
+	      content = item_id + " " + name + " " + description;
 
 
 	      // Item_Categories

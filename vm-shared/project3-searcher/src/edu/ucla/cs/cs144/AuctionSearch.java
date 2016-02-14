@@ -44,7 +44,7 @@ public class AuctionSearch implements IAuctionSearch {
   public AuctionSearch() {
     try {
       searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(new File(LUCENE_DIR + "/index1"))));
-      parser = parser = new QueryParser("content", new StandardAnalyzer());
+      parser = new QueryParser("content", new StandardAnalyzer());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -60,15 +60,15 @@ public class AuctionSearch implements IAuctionSearch {
     try {
       Query q = parser.parse(query);
       hits = searcher.search(q, numResultsToSkip + numResultsToReturn).scoreDocs;
-      res = new SearchResult[hits.length];
+      res = new SearchResult[hits.length - numResultsToSkip];
     } catch (Exception e) {
       e.printStackTrace();
     }
 
     // Skip some, and construct SearchResults for the rest
-    for (int i = numResultsToSkip; i < res.length; i++) {
+    for (int i = 0; i < res.length; i++) {
       try {
-	Document doc = searcher.doc(i);
+	Document doc = searcher.doc(hits[i].doc);
 	res[i] = new SearchResult(doc.get("ItemID"), doc.get("Name"));
       } catch (IOException e) {
 	e.printStackTrace();
@@ -92,10 +92,10 @@ public class AuctionSearch implements IAuctionSearch {
 	String ry = Double.toString(region.getRy());
 	ResultSet rs;
 	rs = s.executeQuery("select ItemID from Item_Location" +
-			    " where x(Location) >= " + lx +
-			    " and x(Location) <= " + rx +
-			    " and y(Location) >= " + ly +
-			    " and y(Location) <= " + ry);
+			    " where x(Location) > " + lx +
+			    " and x(Location) < " + rx +
+			    " and y(Location) > " + ly +
+			    " and y(Location) < " + ry);
 	while (rs.next())
 	  spatialItems.add(rs.getString("ItemID"));
     } catch (SQLException e) {
