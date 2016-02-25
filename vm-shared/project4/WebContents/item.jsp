@@ -7,6 +7,11 @@
     <title><%= request.getAttribute("title") %></title>
   </head>
   <body>
+    <form action="item">
+      Item ID:
+      <input type="text" name="id"/>
+      <input type="submit" value="Submit"/>
+    </form>
     <% 
       EbayItem ei = (EbayItem) request.getAttribute("item"); 
     %>
