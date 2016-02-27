@@ -3,15 +3,24 @@
 <html>
   <head>
     <title><%= request.getAttribute("title") %></title>
+    <script type="text/javascript" src="suggest.js"></script>
+    <script type="text/javascript">
+    window.onload = function () {
+	    var oTextbox = new AutoSuggestControl(document.getElementById("suggest"), new AutoSuggestions());
+    }
+    </script>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
   </head>
   <body>
   <form action="search">
     Query:
-    <input type="text" name="q"/>
+    <input type="text" name="q" autocomplete="off" id="suggest"/>
     <input type="hidden" name="numResultsToSkip" value="0"/>
-    <input type="hidden" name="numResultsToReturn" value="100"/>
+    <input type="hidden" name="numResultsToReturn" value="50"/>
     <input type="submit" value="Submit"/>
   </form>
+  <hr>
+  <h2>Search results for <%= request.getParameter("q") %></h2>
   <p>
     <%
       SearchResult[] res = (SearchResult[]) request.getAttribute("results");
@@ -24,7 +33,7 @@
       String skip = request.getParameter("numResultsToSkip");
       String ret = request.getParameter("numResultsToReturn");
       int resultsSkipped = (skip == null) ? 0 : Integer.parseInt(skip);
-      int resultsReturned = (ret == null) ? 100 : Integer.parseInt(ret);
+      int resultsReturned = (ret == null) ? 50 : Integer.parseInt(ret);
       String query = request.getParameter("q");
       if (resultsSkipped > 0) {
 	int resultsToSkip = resultsSkipped - resultsReturned;
