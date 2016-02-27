@@ -8,9 +8,7 @@
       EbayItem ei = (EbayItem) request.getAttribute("item"); 
     %>
     <title><%= request.getAttribute("title") %></title>
-    <script type="text/javascript" 
-    src="http://maps.google.com/maps/api/js"> 
-    </script> 
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js"></script> 
     <script type="text/javascript"> 
       function process_geocode(results, status) {
 	if (results.length > 0) {
@@ -55,14 +53,18 @@
       <input type="text" name="id"/>
       <input type="submit" value="Submit"/>
     </form>
-    <h1><%= ei.name %></h1>
-    <h3>
-     <%= (ei.lon.equals("")) ? 
+    <hr>
+    <% if (ei.name == null){ %>
+   	<h1>Invalid item ID!</h1>
+	<% } else { %>
+    <h1><%= ei.name %> (<%= request.getParameter("id") %>)</h1>
+    <h2>Seller: <%= ei.user_id + " (" + ei.rating + ")" %></h2>
+    <h3>Location: 
+    <%= (ei.lon.equals("")) ? 
 	  ei.location + " - " + ei.country :
 	  ei.location + " (" + ei.lat + ", " + ei.lon + ") - " +
 	  ei.country %>
     </h3>
-    <p><b>Seller: </b><%= ei.user_id + " (" + ei.rating + ")" %></p>
     <table>
       <tr>
 	<td><b>Currently:</b></td>
@@ -84,7 +86,7 @@
     <%
       for (EbayItem.Bid b : ei.bids) {
 	out.println("<p>");
-	out.println(b.time + "- <b>" + b.amount + "</b></br>");
+	out.println(b.time + " - <b>" + b.amount + "</b></br>");
 	out.print(b.user_id + " (" + b.rating + ") - ");
 	out.println(b.location + " - " + b.country);
 	out.println("</p>");
@@ -92,11 +94,13 @@
     %>
     <h3>Categories:</h3>
     <%
+    if (ei.categories.length > 0)
       for (int i = 0; i < ei.categories.length; i++)
 	out.println("<li>" + ei.categories[i] + "</li>"); 
     %>
     <h2>Description:</h2>
     <p><%= ei.description %></p>
-    <div id="map_canvas" style="width:30em; height:30em"></div> 
+    <div id="map_canvas" style="width:30em; height:30em"></div>
+    <% } %>
   </body>
 </html>
