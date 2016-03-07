@@ -14,6 +14,10 @@ public class CreditCardServlet extends HttpServlet implements Servlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-      
+      String id = request.getParameter("id");
+      String res = AuctionSearchClient.getXMLDataForItemId(id);
+      EbayItem ei = new EbayItem(res);
+      request.setAttribute("item", ei);
+      request.getRequestDispatcher("/creditcard.jsp").forward(request, response);
     }
 }

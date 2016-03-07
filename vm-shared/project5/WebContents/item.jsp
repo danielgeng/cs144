@@ -3,9 +3,7 @@
 
 <html>
   <head>
-    <% 
-      EbayItem ei = (EbayItem) request.getAttribute("item"); 
-    %>
+  <% EbayItem ei = (EbayItem) request.getAttribute("item"); %>
     <title><%= request.getAttribute("title") %></title>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js"></script> 
     <script type="text/javascript"> 
@@ -74,12 +72,16 @@
 	<td><%= ei.first_bid %></td>
       </tr>
       <tr>
-	<% 
-	  if (ei.buy_price != ""){
-	    out.println("<td><b>Buy it Now:</b></td>");
-	    out.println("<td><b>" + ei.buy_price + "</b> <form action='creditcard' style='display:inline'><input type='submit' value='Pay Now'/></form></td>");
-	  }
-	%>
+	<% if (ei.buy_price != ""){ %>
+	<td><b>Buy it Now:</b></td>
+	<td>
+	  <b><%= ei.buy_price %></b> 
+	  <form action='creditcard' style='display:inline'>
+	    <input type='submit' value='Pay Now'/>
+	    <input type='hidden' name='id' value="<%= request.getParameter("id") %>"/>
+	  </form>
+	</td>
+	<%  } %>
       </tr>
     </table>
     <h2>Bids (<%= ei.number_of_bids %>):</h2>
