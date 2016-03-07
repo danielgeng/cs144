@@ -48,7 +48,8 @@ public class EbayItem {
       started = doc.getElementsByTagName("Started").item(0).getTextContent();
       ends = doc.getElementsByTagName("Ends").item(0).getTextContent();
       country = doc.getElementsByTagName("Country").item(0).getTextContent();
-      Element loc = (Element)doc.getElementsByTagName("Location").item(0);
+      NodeList tmp = doc.getElementsByTagName("Location");
+      Element loc = (Element)tmp.item(tmp.getLength()-1);
       location = loc.getTextContent();
       lat = loc.getAttribute("Latitude");
       lon = loc.getAttribute("Longitude");
