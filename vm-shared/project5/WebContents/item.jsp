@@ -1,7 +1,6 @@
 <%@ page import="edu.ucla.cs.cs144.EbayItem" %>
 <%@ page import="java.util.ArrayList" %>
 
-
 <html>
   <head>
     <% 
@@ -76,9 +75,10 @@
       </tr>
       <tr>
 	<% 
-	  if (ei.buy_price != "")
+	  if (ei.buy_price != ""){
 	    out.println("<td><b>Buy it Now:</b></td>");
-	    out.println("<td><b>" + ei.buy_price + "</b></td>");
+	    out.println("<td><b>" + ei.buy_price + "</b> <form action='creditcard' style='display:inline'><input type='submit' value='Pay Now'/></form></td>");
+	  }
 	%>
       </tr>
     </table>

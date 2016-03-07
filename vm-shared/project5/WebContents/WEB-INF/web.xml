@@ -16,6 +16,22 @@
         <url-pattern>/item</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>CreditCardServlet</servlet-name>
+        <servlet-class>edu.ucla.cs.cs144.CreditCardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreditCardServlet</servlet-name>
+        <url-pattern>/creditcard</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ConfirmServlet</servlet-name>
+        <servlet-class>edu.ucla.cs.cs144.ConfirmServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ConfirmServlet</servlet-name>
+        <url-pattern>/confirm</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>ProxyServlet</servlet-name>
         <servlet-class>edu.ucla.cs.cs144.ProxyServlet</servlet-class>
     </servlet>
