@@ -13,7 +13,7 @@ public class CreditCardServlet extends HttpServlet implements Servlet {
     public CreditCardServlet() {}
 
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
       request.getRequestDispatcher("/creditcard.jsp").forward(request, response);
     }

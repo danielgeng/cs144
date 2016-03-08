@@ -76,7 +76,7 @@
 	<td><b>Buy it Now:</b></td>
 	<td>
 	  <b><%= ei.buy_price %></b> 
-	  <form action='creditcard' style='display:inline'>
+	  <form action='creditcard' style='display:inline' method='POST'>
 	    <input type='submit' value='Pay Now'/>
 	  </form>
 	</td>

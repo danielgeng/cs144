@@ -22,7 +22,7 @@
     <tr>
       <td>Credit Card:</td>
       <td>
-	<form action='https://<%= request.getServerName() %>:8443<%= request.getContextPath()%>/confirm.jsp' style='display:inline'>
+	<form action='https://<%= request.getServerName() %>:8443<%= request.getContextPath()%>/confirm.jsp' style='display:inline' method='POST'>
 	  <input type="text" name='card_number'/>
 	  <input type='submit' value='Submit'/>
 	</form>
