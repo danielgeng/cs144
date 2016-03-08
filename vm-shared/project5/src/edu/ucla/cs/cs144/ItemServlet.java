@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class ItemServlet extends HttpServlet implements Servlet {
        
@@ -17,6 +18,8 @@ public class ItemServlet extends HttpServlet implements Servlet {
       String id = request.getParameter("id");
       String res = AuctionSearchClient.getXMLDataForItemId(id);
       EbayItem ei = new EbayItem(res);
+      HttpSession session = request.getSession(true);
+      session.setAttribute("item", ei);
       request.setAttribute("item", ei);
       request.setAttribute("title", "Item Result");
       request.getRequestDispatcher("/item.jsp").forward(request, response);

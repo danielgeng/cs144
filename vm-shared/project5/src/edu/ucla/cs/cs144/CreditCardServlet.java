@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class CreditCardServlet extends HttpServlet implements Servlet {
        
@@ -14,9 +15,8 @@ public class CreditCardServlet extends HttpServlet implements Servlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-      String id = request.getParameter("id");
-      String res = AuctionSearchClient.getXMLDataForItemId(id);
-      EbayItem ei = new EbayItem(res);
+      HttpSession session = request.getSession(true);
+      EbayItem ei = (EbayItem)session.getAttribute("item");
       request.setAttribute("item", ei);
       request.getRequestDispatcher("/creditcard.jsp").forward(request, response);
     }

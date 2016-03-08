@@ -5,6 +5,7 @@
     <% EbayItem ei = (EbayItem) request.getAttribute("item"); %>
     <title>Payment</title>
   </head>
+  <%--<% if (ei != null) { %>--%>
   <table>
     <tr>
       <td>ItemID:</td>
@@ -21,11 +22,12 @@
     <tr>
       <td>Credit Card:</td>
       <td>
-	<form action='confirm' style='display:inline'>
+	<form action='https://<%= request.getServerName() %>:8443<%= request.getContextPath()%>/confirm.jsp' style='display:inline'>
 	  <input type="text"/>
 	  <input type='submit' value='Submit'/>
 	</form>
       </td>
     </tr>
   </table>
+ <%--<% } %>--%>
 </html>
