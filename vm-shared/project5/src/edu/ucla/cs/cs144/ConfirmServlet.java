@@ -14,6 +14,7 @@ public class ConfirmServlet extends HttpServlet implements Servlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-      
+      request.getRequestDispatcher("/confirm.jsp").forward(request, response);
     }
+
 }

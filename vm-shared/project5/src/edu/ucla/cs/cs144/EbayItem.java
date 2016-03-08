@@ -90,7 +90,7 @@ public class EbayItem {
     }
   }
 
-  public int id;
+  public String id;
   public String name;
   public String started;
   public String ends;

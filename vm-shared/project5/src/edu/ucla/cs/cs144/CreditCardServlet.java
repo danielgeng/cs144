@@ -15,9 +15,6 @@ public class CreditCardServlet extends HttpServlet implements Servlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-      HttpSession session = request.getSession(true);
-      EbayItem ei = (EbayItem)session.getAttribute("item");
-      request.setAttribute("item", ei);
       request.getRequestDispatcher("/creditcard.jsp").forward(request, response);
     }
 }

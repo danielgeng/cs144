@@ -78,7 +78,6 @@
 	  <b><%= ei.buy_price %></b> 
 	  <form action='creditcard' style='display:inline'>
 	    <input type='submit' value='Pay Now'/>
-	    <input type='hidden' name='id' value="<%= request.getParameter("id") %>"/>
 	  </form>
 	</td>
 	<%  } %>

@@ -18,6 +18,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
       String id = request.getParameter("id");
       String res = AuctionSearchClient.getXMLDataForItemId(id);
       EbayItem ei = new EbayItem(res);
+      ei.id = id;
       HttpSession session = request.getSession(true);
       session.setAttribute("item", ei);
       request.setAttribute("item", ei);
